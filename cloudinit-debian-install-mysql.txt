@@ -1,0 +1,5 @@
+REQ_VAR MYSQL_ROOT_PASSWORD
+
+APPENDL CLOUDINIT_DATA '  - echo "mysql-server mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | debconf-set-selections'
+APPENDL CLOUDINIT_DATA '  - echo "mysql-server mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD" | debconf-set-selections'
+APPENDL CLOUDINIT_DATA '  - apt-get install --yes --force-yes mysql'

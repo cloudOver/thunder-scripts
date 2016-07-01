@@ -1,0 +1,3 @@
+REQ_VAR SSH_KEY
+APPENDL CLOUDINIT_DATA '  - mkdir -p /root/.ssh/'
+APPENDL CLOUDINIT_DATA '  - echo "$SSH_KEY" >> /root/.ssh/authorized_keys'

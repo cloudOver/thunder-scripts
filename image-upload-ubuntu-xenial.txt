@@ -1,0 +1,7 @@
+SET IMAGE_NAME 'Ubuntu Xenial'
+SET IMAGE_NAME 'Ubuntu 16.04 LTS Cloud'
+SET IMAGE_TYPE 'transient'
+SET IMAGE_URL 'https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img'
+SET IMAGE_FORMAT 'qcow2'
+
+REQUIRE image-upload

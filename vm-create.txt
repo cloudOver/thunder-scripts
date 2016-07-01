@@ -1,0 +1,10 @@
+REQ_VAR VM_NAME
+REQ_VAR VM_DESCRIPTION:'No description'
+REQ_VAR TEMPLATE_NAME
+REQ_VAR IMAGE_NAME
+
+DONE vm:name:$VM_NAME
+RESOURCE template:name:$TEMPLATE_NAME AS TEMPLATE_ID:id
+RESOURCE image:name:$IMAGE_NAME AS IMAGE_ID:id
+
+CALL api:vm:create template_id:$TEMPLATE_ID base_image_id:$IMAGE_ID name:$VM_NAME description:$VM_DESCRIPTION

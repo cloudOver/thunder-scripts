@@ -1,0 +1,12 @@
+SET IMAGE_NAME 'Debian Jessie'
+SET VM_NAME 'Debian Webserver'
+
+REQ_VAR TEMPLATE_NAME:'Large VM'
+
+REQUIRE cloudinit-prepare-config
+REQUIRE cloudinit-load-ssh-key
+REQUIRE cloudinit-debian-install-lighttpd-php
+REQUIRE cloudinit-debian-install-mysql
+REQUIRE cloudinit-create
+
+REQUIRE vm-create
