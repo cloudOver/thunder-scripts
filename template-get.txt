@@ -1,4 +1,4 @@
 REQ_VAR TEMPLATE_NAME
 
-DONE template:name:$TEMPLATE_NAME AS TEMPLATE_ID:id
+DONE template:name:$TEMPLATE_NAME
 RAISE 'Template not found'
