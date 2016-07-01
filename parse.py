@@ -19,7 +19,7 @@ class VariableException(Exception):
 
 
 def cmd_require(params, variables):
-    repo = 'inits/'
+    repo = './'
     f = open(os.path.join(repo, params[0] + '.txt'))
     try:
         parse(f.readlines(), variables)
