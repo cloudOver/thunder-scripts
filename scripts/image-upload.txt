@@ -2,6 +2,7 @@ REQ_VAR IMAGE_URL
 REQ_VAR IMAGE_NAME
 SET IMAGE_SIZE 1
 
+DONE image:name:$IMAGE_NAME
 REQUIRE image-empty
 RESOURCE image:name:$IMAGE_NAME AS IMAGE_ID:id
 CALL api:image:upload_url url:$IMAGE_URL image_id:$IMAGE_ID
