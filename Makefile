@@ -4,7 +4,7 @@ all:
 install:
 	mkdir -p $(DESTDIR)/usr/sbin/
 	python setup.py install --root=$(DESTDIR)
-	cp -r sbin/* $(DESTDIR)/usr/bin/
+	cp -r bin/* $(DESTDIR)/usr/bin/
 	chmod a+x $(DESTDIR)/usr/bin/
 
 egg:
