@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from corecluster.utils.decorators import register
-from thunder.implementations.driver_corecluster import DriverCoreCluster
+from thunderscript.drivers.driver_corecluster import DriverCoreCluster
 
 
 @register(log=True, auth='token')

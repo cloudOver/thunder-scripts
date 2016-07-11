@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import sys
 
-from thunderscript.implementations.driver_pycore import DriverPyCore
+from thunderscript.drivers.driver_pycore import DriverPyCore
 
 if __name__ == "__main__":
     if not 'CORE_URL' in os.environ:
