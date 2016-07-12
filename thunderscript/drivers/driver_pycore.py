@@ -17,27 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from corecluster.utils.decorators import register
-from thunderscript.drivers.driver_corecluster import DriverCoreCluster, DriverDummy
+from base_parser import BaseParser
+import os
+import pycore
 
-
-@register(log=True, auth='token')
-def call(context, script, variables):
-    d = DriverCoreCluster()
-    d.variables = variables
-    d.context = context
-    d.debug = True
-    d.cmd_require([script])
-
-    return d.log
-
-
-@register(log=True, auth='token')
-def variables(context, script):
-    d = DriverDummy()
-    d.context = context
-    d.debug = True
-    d.cmd_require([script])
-
-    return d.variables.keys()
-
+class DriverPyCore(BaseParser):
+    def _call(self, function, params):
+        return pycore.utils.request(os.environ['CORE_URL'], function, params, debug=self.debug)
