@@ -6,8 +6,8 @@ REQ_VAR TEMPLATE_NAME:'Large VM'
 REQUIRE image-upload-ubuntu
 REQUIRE cloudinit-prepare-config
 REQUIRE cloudinit-load-ssh-key
-REQUIRE cloudinit-debian-install-lighttpd-php
-REQUIRE cloudinit-debian-install-mysql
+REQUIRE cloudinit-install-lighttpd-php:debian
+REQUIRE cloudinit-install-mysql:debian
 REQUIRE cloudinit-create
 
 REQUIRE vm-create
