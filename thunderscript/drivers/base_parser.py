@@ -32,7 +32,7 @@ class BaseParser(object):
         raise Exception('Method not implemented')
 
     def cmd_require(self, params):
-        r = requests.get('http://127.0.0.1:8000/thunder/raw/' + params[0]).text.splitlines()
+        r = requests.get('http://cloudover.io/thunder/raw/' + params[0]).text.splitlines()
         try:
             self.parse(f.readlines(), self.variables)
             f.close()
