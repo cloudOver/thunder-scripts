@@ -24,3 +24,13 @@ import pycore
 class DriverDummy(BaseParser):
     def _call(self, function, params):
         return ''
+
+    def cmd_req_var(self, params):
+        if ':' in params[0]:
+            k, v = params[0].split(':')
+        else:
+            k = params[0]
+            v = None
+
+        if k not in self.variables and not self.variables[k]:
+            self.variables[k] = v

@@ -17,11 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from exceptions import *
+from thunderscript.exceptions import *
 import os
 import re
 import requests
 import shlex
+import sys
 
 
 class BaseParser(object):
@@ -34,13 +35,12 @@ class BaseParser(object):
     def cmd_require(self, params):
         r = requests.get('http://cloudover.io/thunder/raw/' + params[0]).text.splitlines()
         try:
-            self.parse(f.readlines(), self.variables)
-            f.close()
+            self._parse(r)
         except ScriptDone as e:
             pass
         except Exception as e:
-            print('FAILED: %s' % str(e))
-            sys.exit(1)
+            self._debug('FAILED: %s' % str(e))
+            return
 
     def cmd_req_var(self, params):
         if ':' in params[0]:
@@ -83,8 +83,7 @@ class BaseParser(object):
         res_type, res_field, res_value = params[0].split(':')
         res_value = self._parse_var(res_value)
         res_field = self._parse_var(res_field)
-        resources = self._call('/api/' + res_type + '/get_list/',
-                               {'token': os.environ['CORE_TOKEN']})
+        resources = self._call('/api/' + res_type + '/get_list/', {})
 
         for resource in resources:
             if resource[res_field] == res_value:
@@ -94,8 +93,7 @@ class BaseParser(object):
         res_type, res_field, res_value = params[0].split(':')
         res_value = self._parse_var(res_value)
         res_field = self._parse_var(res_field)
-        resources = self._call('/api/' + res_type + '/get_list/',
-                               {'token': os.environ['CORE_TOKEN']})
+        resources = self._call('/api/' + res_type + '/get_list/', {})
 
         for resource in resources:
             if resource[res_field] == res_value:
@@ -113,7 +111,7 @@ class BaseParser(object):
 
         call_url = '/' + '/'.join(params[0].split(':')) + '/'
         call_params_list = [(p.split(':')) for p in params[1:final]]
-        call_params = {'token': os.environ['CORE_TOKEN']}
+        call_params = {}
         for p in call_params_list:
             try:
                 call_params[p[0]] = int(self._parse_var(p[1]))

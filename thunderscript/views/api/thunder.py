@@ -18,7 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from corecluster.utils.decorators import register
-from thunderscript.drivers.driver_corecluster import DriverCoreCluster, DriverDummy
+from thunderscript.drivers.driver_corecluster import DriverCoreCluster
+from thunderscript.drivers.driver_dummy import DriverDummy
 
 
 @register(log=True, auth='token')
@@ -37,7 +38,10 @@ def variables(context, script):
     d = DriverDummy()
     d.context = context
     d.debug = True
-    d.cmd_require([script])
+    d.variables = {}
+    try:
+        d.cmd_require([script])
+    except:
+        pass
 
-    return d.variables.keys()
-
+    return d.variables
