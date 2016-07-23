@@ -84,10 +84,10 @@ class BaseParser(object):
         res_value = self._parse_var(res_value)
         res_field = self._parse_var(res_field)
         resources = self._call('/api/' + res_type + '/get_list/', {})
-
-        for resource in resources:
-            if resource[res_field] == res_value:
-                raise ScriptDone()
+        if resources:
+            for resource in resources:
+                if resource[res_field] == res_value:
+                    raise ScriptDone()
 
     def cmd_resource(self, params):
         res_type, res_field, res_value = params[0].split(':')
@@ -95,13 +95,14 @@ class BaseParser(object):
         res_field = self._parse_var(res_field)
         resources = self._call('/api/' + res_type + '/get_list/', {})
 
-        for resource in resources:
-            if resource[res_field] == res_value:
-                as_var, as_field = params[params.index('AS') + 1].split(':')
-                self.variables[as_var] = resource[as_field]
+        if resources:
+            for resource in resources:
+                if resource[res_field] == res_value:
+                    as_var, as_field = params[params.index('AS') + 1].split(':')
+                    self.variables[as_var] = resource[as_field]
 
-                self._debug('SAVE: %s AS %s: %s' % (str(as_var), str(resource[as_field]), str(self.variables[as_var])))
-                return
+                    self._debug('SAVE: %s AS %s: %s' % (str(as_var), str(resource[as_field]), str(self.variables[as_var])))
+                    return
 
     def cmd_call(self, params):
         if 'AS' in params:

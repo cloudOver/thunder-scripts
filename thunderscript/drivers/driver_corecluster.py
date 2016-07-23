@@ -35,8 +35,8 @@ class DriverCoreCluster(BaseParser):
             raise CoreException('context_failed')
 
         for f in decorated_functions:
-            if re.match(r'^%s/' % (f.function_name.replace('.', '/')), function):
+            if re.match(r'^/%s' % (f.function_name.replace('.', '/')), function):
                 return f.function(self.context, **params)
 
-    def _debug(self, msg):
+    def _debug(self, msg, exception=None):
         self.log = self.log + '\n' + msg

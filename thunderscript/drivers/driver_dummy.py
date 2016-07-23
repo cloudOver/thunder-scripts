@@ -32,5 +32,5 @@ class DriverDummy(BaseParser):
             k = params[0]
             v = None
 
-        if k not in self.variables and not self.variables[k]:
+        if k not in self.variables or self.variables[k] is None:
             self.variables[k] = v
