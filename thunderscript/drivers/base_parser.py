@@ -28,18 +28,23 @@ import sys
 class BaseParser(object):
     variables = {}
     debug = False
+    recursion = 0
 
     def _call(self, function, params):
         raise Exception('Method not implemented')
 
     def cmd_require(self, params):
+        if self.recursion > 100:
+            raise ScriptFailed('Recursion limit reached')
+
         r = requests.get('http://cloudover.io/thunder/raw/' + params[0]).text.splitlines()
         try:
+            self.recursion = self.recursion + 1
             self._parse(r)
         except ScriptDone as e:
             pass
         except Exception as e:
-            self._debug('FAILED: %s' % str(e))
+            self._debug('FAILED: %s' % str(e), e)
             return
 
     def cmd_req_var(self, params):
@@ -80,14 +85,18 @@ class BaseParser(object):
             self.cmd_set(params)
 
     def cmd_done(self, params):
-        res_type, res_field, res_value = params[0].split(':')
-        res_value = self._parse_var(res_value)
-        res_field = self._parse_var(res_field)
-        resources = self._call('/api/' + res_type + '/get_list/', {})
-        if resources:
-            for resource in resources:
-                if resource[res_field] == res_value:
-                    raise ScriptDone()
+        found = 0
+        for param in params:
+            res_type, res_field, res_value = param.split(':')
+            res_value = self._parse_var(res_value)
+            res_field = self._parse_var(res_field)
+            resources = self._call('/api/' + res_type + '/get_list/', {})
+            if resources:
+                for resource in resources:
+                    if resource[res_field] == res_value:
+                        found = found+1
+        if found > 0:
+            raise ScriptDone()
 
     def cmd_resource(self, params):
         res_type, res_field, res_value = params[0].split(':')

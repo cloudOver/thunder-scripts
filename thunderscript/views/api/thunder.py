@@ -28,6 +28,7 @@ def call(context, script, variables):
     d.variables = variables
     d.context = context
     d.debug = True
+    d.recursion = 0
     d.cmd_require([script])
 
     return d.log
@@ -38,6 +39,7 @@ def variables(context, script):
     d = DriverDummy()
     d.context = context
     d.debug = True
+    d.recursion = 0
     d.variables = {}
     try:
         d.cmd_require([script])

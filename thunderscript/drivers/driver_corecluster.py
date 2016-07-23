@@ -40,3 +40,4 @@ class DriverCoreCluster(BaseParser):
 
     def _debug(self, msg, exception=None):
         self.log = self.log + '\n' + msg
+        syslog(msg="Thunder: ", exception=exception)
