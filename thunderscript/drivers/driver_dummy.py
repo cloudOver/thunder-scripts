@@ -22,6 +22,8 @@ import os
 import pycore
 
 class DriverDummy(BaseParser):
+    log = ''
+    
     def _call(self, function, params):
         return ''
 
@@ -34,3 +36,6 @@ class DriverDummy(BaseParser):
 
         if k not in self.variables or self.variables[k] is None:
             self.variables[k] = v
+
+    def _debug(self, msg, exception=None):
+        self.log = self.log + '\n' + msg

@@ -5,7 +5,7 @@ from distutils.command.install import install as _install
 setup(
   name = 'thunderscript',
   packages = find_packages(exclude=['config', 'config.*']),
-  version = '16.07.16',
+  version = '16.07.17',
   description = 'Thunder script parser',
   author = 'Maciej Nabozny',
   author_email = 'maciej.nabozny@cloudover.io',
