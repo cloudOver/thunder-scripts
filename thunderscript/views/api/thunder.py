@@ -31,7 +31,7 @@ def call(context, script, variables):
     d.recursion = 0
     d.cmd_require([script])
 
-    return d.log
+    return {'log': d.log, 'variables': d.variables}
 
 
 @register(log=True, auth='token')
@@ -46,4 +46,4 @@ def variables(context, script):
     except:
         pass
 
-    return d.variables
+    return {'log': d.log, 'variables': d.variables}
