@@ -92,13 +92,23 @@ DONE image:name:$IMAGE_NAME
 CALL api:image:create size:$IMAGE_SIZE image_type:$IMAGE_TYPE name:$IMAGE_NAME description:$IMAGE_DESCRIPTION disk_controller:$IMAGE_DISK_CONTROLLER
 ```
 
-### RESOURCE api_module:field:value AS VARIABLE:field
-This works similar to the DONE, but if given resource is found in CoreCluster's api module (e.g. /api/vm/get_list returns VM with name="abc"), the result is stored in given after AS parameter variable.
+### RESOURCE api_module:field1:value1 api_module:field2:value2 ... AS VARIABLE:field
+This works similar to the DONE, but if given resource is found in CoreCluster's api module, the result is stored in given variable after AS parameter. You can specify more than one criteria to get exactly one object.
 ##### Example
 To get id of template defined by name (TEMPLATE_NAME variable), we need to get list of templates and find one with name equal to $TEMPLATE_NAME. Then we want to store id of this template as TEMPLATE_ID variable. Later, this variable could be used to launch VM with this template.
 ```
 REQ_VAR TEMPLATE_NAME
 RESOURCE template:name:$TEMPLATE_NAME AS TEMPLATE_ID:id
+```
+
+### BOOTCMD command
+Create (or append to existing) CloudInit script with bootcmd section. Given command is added to end of bootcmd section. Whole script is stored in CLOUDINIT_BOOTCMD variable and it is required to store it in the cloud by cloudinit-create script.
+##### Example
+```
+BOOTCMD apt-get update
+BOOTCMD apt-get upgrade
+BOOTCMD echo "Hello world" > /tmp/my_file
+REQUIRE cloudinit-create
 ```
 
 ### RAISE reason
