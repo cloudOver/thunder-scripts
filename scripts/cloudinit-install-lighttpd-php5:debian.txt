@@ -1,9 +1,0 @@
-REQUIRE cloudinit-install-lighttpd:debian
-
-APPENDL CLOUDINIT_DATA '  - apt-get install --yes --force-yes php5-fpm php5'
-APPENDL CLOUDINIT_DATA '  - echo "cgi.fix_pathinfo=1" >> /etc/php5/cgi/php.ini'
-APPENDL CLOUDINIT_DATA '  - echo "fastcgi.server = ( \".php\" => ((" >> /etc/lighttpd/lighttpd.conf'
-APPENDL CLOUDINIT_DATA '  - echo "  \"bin-path\" => \"/usr/bin/php5-cgi\"," >> /etc/lighttpd/lighttpd.conf'
-APPENDL CLOUDINIT_DATA '  - echo "  \"socket\" => \"/tmp/php.socket\"" >> /etc/lighttpd/lighttpd.conf'
-APPENDL CLOUDINIT_DATA '  - echo ")))" >> /etc/lighttpd/lighttpd.conf'
-APPENDL CLOUDINIT_DATA '  - service lighttpd restart'

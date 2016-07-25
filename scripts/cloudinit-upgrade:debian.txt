@@ -1,2 +1,0 @@
-APPENDL CLOUDINIT_DATA '  - apt-get update'
-APPENDL CLOUDINIT_DATA '  - apt-get --yes --force-yes upgrade'

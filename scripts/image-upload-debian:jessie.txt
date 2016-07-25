@@ -1,7 +1,0 @@
-SET IMAGE_NAME 'Debian Jessie'
-SET IMAGE_DESCRIPTION 'Debian 8.x Cloud'
-SET IMAGE_TYPE 'transient'
-SET IMAGE_URL 'http://cdimage.debian.org/cdimage/openstack/current/debian-8.5.0-openstack-amd64.qcow2'
-SET IMAGE_FORMAT 'qcow2'
-
-REQUIRE image-upload

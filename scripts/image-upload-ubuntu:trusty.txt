@@ -1,7 +1,0 @@
-SET IMAGE_NAME 'Ubuntu Trusty'
-SET IMAGE_DESCRIPTION 'Ubuntu 14.04 LTS Cloud'
-SET IMAGE_TYPE 'transient'
-SET IMAGE_URL 'https://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img'
-SET IMAGE_FORMAT 'qcow2'
-
-REQUIRE image-upload

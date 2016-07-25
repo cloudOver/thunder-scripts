@@ -23,7 +23,7 @@ import pycore
 
 class DriverDummy(BaseParser):
     log = ''
-    
+
     def _call(self, function, params):
         return ''
 
@@ -36,6 +36,19 @@ class DriverDummy(BaseParser):
 
         if k not in self.variables or self.variables[k] is None:
             self.variables[k] = v
+
+    def cmd_resource(self, params):
+        res_type, res_field, res_value = params[0].split(':')
+        as_var, as_field = params[params.index('AS') + 1].split(':')
+        self.variables[as_var] = 'SET FROM RESOURCE'
+
+        self._debug('SAVE RESOURCE ' + res_type + ':' + res_field + ' AS ' + as_var)
+
+    def cmd_call(self, params):
+        if 'AS' in params:
+            self._debug('SAVE IN CALL')
+            as_var, as_field = params[params.index('AS') + 1].split(':')
+            self.variables[as_var] = 'SAVED IN CALL'
 
     def _debug(self, msg, exception=None):
         self.log = self.log + '\n' + msg

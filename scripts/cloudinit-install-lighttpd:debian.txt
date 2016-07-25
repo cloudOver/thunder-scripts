@@ -1,3 +1,0 @@
-REQUIRE cloudinit-upgrade
-
-APPENDL CLOUDINIT_DATA '  - apt-get install --yes --force-yes lighttpd'
