@@ -139,6 +139,15 @@ class BaseParser(object):
     def cmd_raise(self, params):
         raise ScriptFailed(params[0])
 
+    def cmd_bootcmd(self, params):
+        parsed_params = self._parse_vars(params)
+        if not 'CLOUDINIT_BOOTCMD' in self.variables:
+            self.variables['CLOUDINIT_BOOTCMD'] = '#cloud-config\n'\
+                                                  '\n'\
+                                                  'bootcmd:\n'
+
+        self.variables['CLOUDINIT_BOOTCMD'] = '%s  - %s\n' % (self.variables['CLOUDINIT_BOOTCMD'], ' '.join(parsed_params))
+
     def _parse_var(self, value):
         try:
             return int(value)
@@ -191,3 +200,5 @@ class BaseParser(object):
                 self.cmd_call(cmd[1:])
             if len(cmd) > 1 and cmd[0] == 'RAISE':
                 self.cmd_raise(cmd[1:])
+            if len(cmd) > 1 and cmd[0] == 'BOOTCMD':
+                self.cmd_bootcmd(cmd[1:])
