@@ -50,5 +50,5 @@ class DriverDummy(BaseParser):
             as_var, as_field = params[params.index('AS') + 1].split(':')
             self.variables[as_var] = 'SAVED IN CALL'
 
-    def _debug(self, msg, exception=None):
+    def _debug(self, msg, exception=None, color=None):
         self.log = self.log + '\n' + msg

@@ -48,4 +48,6 @@ if __name__ == "__main__":
 
     d = DriverPyCore()
     d.variables = vars
+    if 'CORE_DEBUG' in os.environ:
+        d.debug = True
     d.cmd_require([sys.argv[1]])

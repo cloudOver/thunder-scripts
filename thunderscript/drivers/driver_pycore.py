@@ -23,4 +23,7 @@ import pycore
 
 class DriverPyCore(BaseParser):
     def _call(self, function, params):
+        if params is None:
+            params = {}
+        params['token'] = os.environ['CORE_TOKEN']
         return pycore.utils.request(os.environ['CORE_URL'], function, params, debug=self.debug)

@@ -164,9 +164,26 @@ class BaseParser(object):
     def _parse_vars(self, values):
         return [self._parse_var(v) for v in values]
 
-    def _debug(self, msg, exception=None):
+    def _debug(self, msg, exception=None, color=None):
+        C_BLUE = '\033[94m'
+        C_GREEN = '\033[92m'
+        C_WARNING = '\033[93m'
+        C_ERROR = '\033[91m'
+        C_CLEAR = '\033[0m'
         if self.debug:
+            if color == 'warning':
+                print(C_WARNING)
+            elif color == 'error':
+                print(C_ERROR)
+            elif color == 'blue':
+                print(C_BLUE)
+            elif color == 'green':
+                print(C_GREEN)
+
             print(msg)
+            
+            if color is not None:
+                print(C_CLEAR)
 
     def _parse(self, commands):
         for command in commands:

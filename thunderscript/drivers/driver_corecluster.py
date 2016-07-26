@@ -38,6 +38,6 @@ class DriverCoreCluster(BaseParser):
             if re.match(r'^/%s' % (f.function_name.replace('.', '/')), function):
                 return f.function(self.context, **params)
 
-    def _debug(self, msg, exception=None):
+    def _debug(self, msg, exception=None, color=None):
         self.log = self.log + '\n' + msg
         syslog(msg="Thunder: ", exception=exception)
