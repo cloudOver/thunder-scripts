@@ -164,7 +164,7 @@ class BaseParser(object):
     def _parse_vars(self, values):
         return [self._parse_var(v) for v in values]
 
-    def _debug(self, msg):
+    def _debug(self, msg, exception=None):
         if self.debug:
             print(msg)
 
