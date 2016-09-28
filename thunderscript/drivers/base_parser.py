@@ -35,6 +35,7 @@ class BaseParser(object):
 
     def cmd_require(self, params):
         if self.recursion > 100:
+            self._debug('FAILED: RECURSION LIMIT REACHED', color='error')
             raise ScriptFailed('Recursion limit reached')
 
         r = requests.get('http://cloudover.io/thunder/raw/' + params[0]).text.splitlines()
@@ -44,7 +45,7 @@ class BaseParser(object):
         except ScriptDone as e:
             pass
         except Exception as e:
-            self._debug('FAILED: %s' % str(e), e)
+            self._debug('FAILED: %s' % str(e), e, color='warning')
             return
 
     def cmd_req_var(self, params):
@@ -85,42 +86,59 @@ class BaseParser(object):
             self.cmd_set(params)
 
     def cmd_done(self, params):
-        found = 0
-        for param in params:
-            res_type, res_field, res_value = param.split(':')
-            res_value = self._parse_var(res_value)
-            res_field = self._parse_var(res_field)
-            resources = self._call('/api/' + res_type + '/get_list/', {})
-            if resources:
-                for resource in resources:
-                    if resource[res_field] == res_value:
-                        found = found+1
-        if found > 0:
-            raise ScriptDone()
+        if 'AS' in params:
+            final_param = params.index('AS')
+        else:
+            final_param = len(params)
 
-    def cmd_resource(self, params):
-        res_type, res_field, res_value = params[0].split(':')
-        res_value = self._parse_var(res_value)
-        res_field = self._parse_var(res_field)
+        filters = {}
+        res_type = ''
+        found = 0
+        for param in params[:final_param]:
+            res_type, res_field, res_value = param.split(':')
+            filters[res_field] = self._parse_var(res_value)
         resources = self._call('/api/' + res_type + '/get_list/', {})
 
         if resources:
             for resource in resources:
-                if resource[res_field] == res_value:
-                    as_var, as_field = params[params.index('AS') + 1].split(':')
-                    self.variables[as_var] = resource[as_field]
+                for filter in filters.keys():
+                    if filter in resource and resource[filter] == filters[filter]:
+                        found = found+1
+                        if 'AS' in params:
+                            as_var, as_field = params[final_param + 1].split(':')
+                            self.variables[as_var] = resource[as_field]
+                            self._debug('SAVE: %s AS %s' % (str(as_var), str(resource[as_field])), color='yellow')
+                        raise ScriptDone()
 
-                    self._debug('SAVE: %s AS %s: %s' % (str(as_var), str(resource[as_field]), str(self.variables[as_var])))
-                    return
+    def cmd_resource(self, params):
+        final_param = params.index('AS')
+
+        filters = {}
+        res_type = ''
+        for param in params[:final_param]:
+            res_type, res_field, res_value = param.split(':')
+            filters[res_field] = self._parse_var(res_value)
+        resources = self._call('/api/' + res_type + '/get_list/', {})
+
+        if resources:
+            for resource in resources:
+                for filter in filters.keys():
+                    if filter in resource and resource[filter] == filters[filter]:
+                        as_var, as_field = params[final_param + 1].split(':')
+                        self.variables[as_var] = resource[as_field]
+                        self._debug('SAVE: %s AS %s' % (str(as_var), str(resource[as_field])), color='yellow')
+                        return
+
+        raise ScriptFailed('RESOURCE NOT FOUND')
 
     def cmd_call(self, params):
         if 'AS' in params:
-            final = params.index('AS')
+            final_param = params.index('AS')
         else:
-            final = len(params)
+            final_param = len(params)
 
         call_url = '/' + '/'.join(params[0].split(':')) + '/'
-        call_params_list = [(p.split(':')) for p in params[1:final]]
+        call_params_list = [(p.split(':')) for p in params[1:final_param]]
         call_params = {}
         for p in call_params_list:
             try:
@@ -131,10 +149,9 @@ class BaseParser(object):
         ret = self._call(call_url, call_params)
 
         if 'AS' in params:
-            self._debug('SAVE')
-            as_var, as_field = params[params.index('AS') + 1].split(':')
+            as_var, as_field = params[final_param + 1].split(':')
             self.variables[as_var] = ret[as_field]
-            self._debug('SAVE: %s AS %s' % (str(as_var), str(ret[as_field])))
+            self._debug('SAVE: %s AS %s' % (str(as_var), str(ret[as_field])), color='yellow')
 
     def cmd_raise(self, params):
         raise ScriptFailed(params[0])
@@ -164,26 +181,31 @@ class BaseParser(object):
     def _parse_vars(self, values):
         return [self._parse_var(v) for v in values]
 
-    def _debug(self, msg, exception=None, color=None):
+    def _debug(self, msg, exception=None, color=None, newline=True):
         C_BLUE = '\033[94m'
         C_GREEN = '\033[92m'
-        C_WARNING = '\033[93m'
+        C_YELLOW = '\033[93m'
+        C_WARNING = '\033[91m'
         C_ERROR = '\033[91m'
         C_CLEAR = '\033[0m'
         if self.debug:
             if color == 'warning':
-                print(C_WARNING)
+                sys.stderr.write(C_WARNING)
             elif color == 'error':
-                print(C_ERROR)
+                sys.stderr.write(C_ERROR)
+            elif color == 'yellow':
+                sys.stderr.write(C_YELLOW)
             elif color == 'blue':
-                print(C_BLUE)
+                sys.stderr.write(C_BLUE)
             elif color == 'green':
-                print(C_GREEN)
+                sys.stderr.write(C_GREEN)
 
-            print(msg)
-            
+            sys.stderr.write(msg)
+            if newline == True:
+                sys.stderr.write('\n')
+
             if color is not None:
-                print(C_CLEAR)
+                sys.stderr.write(C_CLEAR)
 
     def _parse(self, commands):
         for command in commands:
@@ -195,9 +217,9 @@ class BaseParser(object):
                     cmd.append(c)
 
             if len(cmd) > 0:
-                self._debug('CALL: %s' % cmd[0])
-                self._debug(' - LINE: ' + ' '.join(['"' + str(c) + '" ' for c in cmd]))
-                self._debug(' - VARS: ' + ' '.join(['"' + str(c) + '" ' for c in self.variables]))
+                self._debug('CALL: %s' % cmd[0], color='green')
+                self._debug('  - LINE: ' + ' '.join(['"' + str(c) + '" ' for c in cmd]), color='blue')
+                self._debug('  - VARS: ' + ' '.join(['"' + str(c) + '" ' for c in self.variables]), color='blue')
 
             if len(cmd) > 1 and cmd[0] == 'REQUIRE':
                 self.cmd_require(cmd[1:])

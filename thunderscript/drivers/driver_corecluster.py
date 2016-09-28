@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from corenetwork.utils.logger import log
 from corecluster.urls import decorated_functions
-from corecluster.utils.logger import *
 from corecluster.utils.exception import CoreException
 from base_parser import BaseParser
 import re
@@ -40,4 +40,7 @@ class DriverCoreCluster(BaseParser):
 
     def _debug(self, msg, exception=None, color=None):
         self.log = self.log + '\n' + msg
-        syslog(msg="Thunder: ", exception=exception)
+        if exception is None:
+            log(msg="Thunder: ", tags=('thunder'))
+        else:
+            log(msg="Thunder: ", exception=exception, tags=('thunder', 'error'))
