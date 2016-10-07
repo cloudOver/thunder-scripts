@@ -41,6 +41,6 @@ class DriverCoreCluster(BaseParser):
     def _debug(self, msg, exception=None, color=None):
         self.log = self.log + '\n' + msg
         if exception is None:
-            log(msg="Thunder: ", tags=('thunder'))
+            log(msg=msg, tags=('thunder'))
         else:
-            log(msg="Thunder: ", exception=exception, tags=('thunder', 'error'))
+            log(msg=msg, exception=exception, tags=('thunder', 'error'))
