@@ -33,6 +33,7 @@ def call(context, script, variables):
     d.recursion = 0
     try:
         d.cmd_require([script])
+        return {'finished': 'script_done', 'log': d.log, 'variables': d.variables}
     except ScriptDone as e:
         return {'finished': 'script_done', 'log': d.log, 'variables': d.variables}
     except ScriptFailed as e:

@@ -44,7 +44,7 @@ class BaseParser(object):
             self._parse(r)
         except ScriptDone as e:
             pass
-        
+
 
     def cmd_req_var(self, params):
         if ':' in params[0]:
