@@ -38,15 +38,13 @@ class BaseParser(object):
             self._debug('FAILED: RECURSION LIMIT REACHED', color='error')
             raise ScriptFailed('Recursion limit reached')
 
-        r = requests.get('http://cloudover.io/thunder/raw/' + params[0]).text.splitlines()
+        r = requests.get('http://cloudover.io/thunder/raw/' + self._parse_var(params[0])).text.splitlines()
         try:
             self.recursion = self.recursion + 1
             self._parse(r)
         except ScriptDone as e:
             pass
-        except Exception as e:
-            self._debug('FAILED: %s' % str(e), e, color='warning')
-            return
+        
 
     def cmd_req_var(self, params):
         if ':' in params[0]:
@@ -55,7 +53,7 @@ class BaseParser(object):
             k = params[0]
             v = None
 
-        if not params[0] in self.variables:
+        if not k in self.variables:
             if v is not None:
                 self.variables[k] = v
             else:

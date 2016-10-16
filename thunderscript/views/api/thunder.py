@@ -18,8 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from corecluster.utils.decorators import register
+from corenetwork.utils.logger import log
 from thunderscript.drivers.driver_corecluster import DriverCoreCluster
 from thunderscript.drivers.driver_dummy import DriverDummy
+from thunderscript.exceptions import *
 
 
 @register(log=True, auth='token')
@@ -29,9 +31,17 @@ def call(context, script, variables):
     d.context = context
     d.debug = True
     d.recursion = 0
-    d.cmd_require([script])
-
-    return {'log': d.log, 'variables': d.variables}
+    try:
+        d.cmd_require([script])
+    except ScriptDone as e:
+        return {'finished': 'script_done', 'log': d.log, 'variables': d.variables}
+    except ScriptFailed as e:
+        return {'finished': str(e), 'log': d.log, 'variables': d.variables}
+    except VariableException as e:
+        return {'finished': str(e), 'log': d.log, 'variables': d.variables}
+    except Exception as e:
+        log(msg='Script failed', exception=e, tags=('thunder', 'error'))
+        return {'finished': 'failed', 'log': d.log, 'variables': d.variables}
 
 
 @register(log=True, auth='token')
