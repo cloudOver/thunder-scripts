@@ -26,6 +26,7 @@ import re
 
 class DriverCoreCluster(BaseParser):
     context = None
+    call_object = None
     log = ''
 
     def _call(self, function, params):
@@ -40,8 +41,12 @@ class DriverCoreCluster(BaseParser):
                 return f.function(self.context, **params)
 
     def _debug(self, msg, exception=None, color=None):
+        if self.call_object is not None:
+            self.call_object.log = self.call_object.log + '\n' + msg
+            self.call_object.save()
         self.log = self.log + '\n' + msg
+
         if exception is None:
-            log(msg=msg, tags=('thunder'))
+            log(msg=msg, tags=['thunder',])
         else:
             log(msg=msg, exception=exception, tags=('thunder', 'error'))
