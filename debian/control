@@ -1,0 +1,13 @@
+Source: thunderscript
+Section: contrib
+Priority: extra
+Maintainer: Marta Nabozny <marta.nabozny@cloudover.io>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.4
+Homepage: http://cloudover.org/corecluster/
+
+Package: thunderscript
+Architecture: all
+Depends: python
+Description: ThunderScript package
+ A tool for managing the CoreCluster cloud with Thunder Scripts
