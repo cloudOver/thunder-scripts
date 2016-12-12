@@ -2,10 +2,10 @@ all:
 	echo Nothing to compile
 
 install:
-	mkdir -p $(DESTDIR)/usr/sbin/
+	mkdir -p $(DESTDIR)/usr/bin/
 	python setup.py install --root=$(DESTDIR)
 	cp -r bin/* $(DESTDIR)/usr/bin/
-	chmod a+x $(DESTDIR)/usr/bin/
+	chmod a+x $(DESTDIR)/usr/bin/*
 
 egg:
 	python setup.py sdist bdist_egg
