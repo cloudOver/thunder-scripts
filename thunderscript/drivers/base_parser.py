@@ -41,8 +41,15 @@ class BaseParser(object):
             raise ScriptFailed('Recursion limit reached')
 
         encoder = simplejson.JSONEncoder()
+        decoder = simplejson.JSONDecoder()
         data = encoder.encode({'token': self.token, 'instance_id': self.installation_id})
-        r = requests.post('https://cloudover.io/thunder/raw/' + self._parse_var(params[0]), data=data).text.splitlines()
+        r = requests.post('https://cloudover.io/thunder/raw/' + self._parse_var(params[0]), data=data).text
+        response = decoder.decode(r)
+        if 'error' in response:
+            raise ScriptFailed(response['error'])
+        else:
+            r = response['script']
+            
         try:
             self.recursion = self.recursion + 1
             self._parse(r)
