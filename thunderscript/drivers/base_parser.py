@@ -23,12 +23,14 @@ import re
 import requests
 import shlex
 import sys
-
+import simplejson
 
 class BaseParser(object):
     variables = {}
     debug = False
     recursion = 0
+    installation_id = 'none'
+    token = 'public'
 
     def _call(self, function, params):
         raise Exception('Method not implemented')
@@ -38,7 +40,9 @@ class BaseParser(object):
             self._debug('FAILED: RECURSION LIMIT REACHED', color='error')
             raise ScriptFailed('Recursion limit reached')
 
-        r = requests.get('http://cloudover.io/thunder/raw/' + self._parse_var(params[0])).text.splitlines()
+        encoder = simplejson.JSONEncoder()
+        data = encoder.encode({'token': self.token, 'instance_id': self.installation_id})
+        r = requests.post('https://cloudover.io/thunder/raw/' + self._parse_var(params[0]), data=data).text.splitlines()
         try:
             self.recursion = self.recursion + 1
             self._parse(r)

@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from corecluster.utils.decorators import register
 from corecluster.utils.exception import CoreException
 from corenetwork.utils.logger import log
+from corenetwork.utils import config
 from thunderscript.drivers.driver_corecluster import DriverCoreCluster
 from thunderscript.drivers.driver_dummy import DriverDummy
 from thunderscript.exceptions import *
@@ -28,7 +29,7 @@ from thunderscript.models.thunder import Call
 import datetime
 
 @register(log=True, auth='token')
-def call(context, script, variables):
+def call(context, script, variables, token='public'):
     '''
     Execute thunder script
     :param script: Script name or public ID
@@ -43,6 +44,8 @@ def call(context, script, variables):
     c.save()
 
     d = DriverCoreCluster()
+    d.token = token
+    d.installation_id = config.get('core', 'INSTALLATION_ID')
     d.variables = variables
     d.context = context
     d.debug = True
