@@ -29,7 +29,7 @@ from thunderscript.models.thunder import Call
 import datetime
 
 @register(log=True, auth='token')
-def call(context, script, variables, token='public'):
+def call(context, script, variables, thunder_token='public'):
     '''
     Execute thunder script
     :param script: Script name or public ID
@@ -44,7 +44,7 @@ def call(context, script, variables, token='public'):
     c.save()
 
     d = DriverCoreCluster()
-    d.token = token
+    d.token = thunder_token
     d.installation_id = config.get('core', 'INSTALLATION_ID')
     d.variables = variables
     d.context = context
@@ -111,12 +111,14 @@ def delete(context, call_id):
 
 
 @register(log=True, auth='token')
-def variables(context, script):
+def variables(context, script, thunder_token='public'):
     '''
     Get variables required by script
     :param script: Script name or public ID
     '''
     d = DriverDummy()
+    d.token = thunder_token
+    d.installation_id = config.get('core', 'INSTALLATION_ID')
     d.context = context
     d.debug = True
     d.recursion = 0

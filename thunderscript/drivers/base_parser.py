@@ -40,19 +40,26 @@ class BaseParser(object):
             self._debug('FAILED: RECURSION LIMIT REACHED', color='error')
             raise ScriptFailed('Recursion limit reached')
 
+        script_name = self._parse_var(params[0])
+
         encoder = simplejson.JSONEncoder()
         decoder = simplejson.JSONDecoder()
+
         data = encoder.encode({'token': self.token, 'instance_id': self.installation_id})
-        r = requests.post('https://cloudover.io/thunder/raw/' + self._parse_var(params[0] + '/'), data=data).text
-        response = decoder.decode(r)
-        if 'error' in response:
-            raise ScriptFailed(response['error'])
+
+        r = decoder.decode(requests.post('https://cloudover.io/thunder/raw/' + script_name + '/',
+                                         data=data).text)
+
+        if 'error' in r:
+            raise ScriptFailed(r['error'])
+        elif 'script' not in r:
+            raise ScriptFailed('no_script_in_repository_response')
         else:
-            r = response['script']
+            script = r['script'].splitlines()
 
         try:
             self.recursion = self.recursion + 1
-            self._parse(r)
+            self._parse(script)
         except ScriptDone as e:
             pass
 
