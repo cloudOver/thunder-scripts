@@ -97,7 +97,7 @@ def get_list(context):
     '''
     Get list of Thunder scripts
     '''
-    scripts = Call.get_list(context.user_id)
+    scripts = Call.get_list(context.user_id, order_by='-call_date')
     return [script.to_dict for script in scripts]
 
 
