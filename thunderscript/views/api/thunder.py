@@ -56,37 +56,49 @@ def call(context, script, variables, thunder_token='public'):
     c.save()
     try:
         d.cmd_require([script])
-        c.state = 'done'
+        c.set_state('done')
         c.variables = '\n'.join([str(k) + '=' + str(d.variables[k]) for k in d.variables.keys()])
         c.finish_date = datetime.datetime.now()
+        c.log += '\nSCRIPT DONE'
         c.save()
         return {'finished': 'script_done', 'log': d.log, 'variables': d.variables}
     except ScriptDone as e:
-        d.cmd_require([script])
-        c.state = 'done'
+        c.set_state('done')
         c.variables = '\n'.join([str(k) + '=' + str(d.variables[k]) for k in d.variables.keys()])
         c.finish_date = datetime.datetime.now()
+        c.log += '\nSCRIPT DONE'
         c.save()
         return {'finished': 'script_done', 'log': d.log, 'variables': d.variables}
     except ScriptFailed as e:
-        d.cmd_require([script])
-        c.state = 'failed'
+        c.set_state('failed')
         c.variables = '\n'.join([str(k) + '=' + str(d.variables[k]) for k in d.variables.keys()])
         c.finish_date = datetime.datetime.now()
+        c.log += '\nSCRIPT FAILED: ' + str(e)
+        c.log += '\nVARIABLES: ' + str(d.variables)
         c.save()
         return {'finished': str(e), 'log': d.log, 'variables': d.variables}
     except VariableException as e:
-        d.cmd_require([script])
-        c.state = 'variable missing'
+        c.set_state('variable missing')
         c.variables = '\n'.join([str(k) + '=' + str(d.variables[k]) for k in d.variables.keys()])
         c.finish_date = datetime.datetime.now()
+        c.log += '\nVARIABLE ERROR: ' + str(e)
+        c.log += '\nVARIABLES: ' + str(d.variables)
+        c.save()
+        return {'finished': str(e), 'log': d.log, 'variables': d.variables}
+    except CoreException as e:
+        c.set_state('api error')
+        c.variables = '\n'.join([str(k) + '=' + str(d.variables[k]) for k in d.variables.keys()])
+        c.finish_date = datetime.datetime.now()
+        c.log += '\nAPI ERROR: ' + str(e)
+        c.log += '\nVARIABLES: ' + str(d.variables)
         c.save()
         return {'finished': str(e), 'log': d.log, 'variables': d.variables}
     except Exception as e:
-        d.cmd_require([script])
-        c.state = 'failed'
+        c.set_state('failed')
         c.variables = '\n'.join([str(k) + '=' + str(d.variables[k]) for k in d.variables.keys()])
         c.finish_date = datetime.datetime.now()
+        c.log += '\nCORE ERROR'
+        c.log += '\nVARIABLES: ' + str(d.variables)
         c.save()
         log(msg='Script failed', exception=e, tags=('thunder', 'error'))
         return {'finished': 'failed', 'log': d.log, 'variables': d.variables}
@@ -97,14 +109,14 @@ def get_list(context):
     '''
     Get list of Thunder scripts
     '''
-    scripts = Call.get_list(context.user_id, order_by='-call_date')
+    scripts = Call.get_list(context.user_id, order_by=['-call_date'])
     return [script.to_dict for script in scripts]
 
 
 @register(log=True, auth='token')
 def delete(context, call_id):
     script = Call.get(context.user_id, call_id)
-    if script.in_states(['done']):
+    if not script.in_state('in progress'):
         script.delete()
     else:
         raise CoreException('script_not_done')

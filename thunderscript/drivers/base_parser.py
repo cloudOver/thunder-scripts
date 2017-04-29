@@ -179,7 +179,7 @@ class BaseParser(object):
                                                   '\n'\
                                                   'bootcmd:\n'
 
-        self.variables['CLOUDINIT_BOOTCMD'] = '%s  - %s\n' % (self.variables['CLOUDINIT_BOOTCMD'], ' '.join(parsed_params))
+        self.variables['CLOUDINIT_BOOTCMD'] = '%s  - %s\n' % (str(self.variables['CLOUDINIT_BOOTCMD']), str(' '.join([str(v) for v in parsed_params])))
 
     def _parse_var(self, value):
         try:

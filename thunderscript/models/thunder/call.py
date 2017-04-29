@@ -28,7 +28,7 @@ class Call(UserMixin, StateMixin, CoreModel):
         'done',
         'failed',
         'variable missing',
-        'deleted',
+        'api error',
     ]
 
     default_state = 'init'
